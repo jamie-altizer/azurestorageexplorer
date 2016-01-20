@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.Text;
 using Microsoft.WindowsAzure.StorageClient;
 using Microsoft.WindowsAzure;
@@ -24,9 +26,11 @@ namespace StorageHelper
 
 		public static void Initialize(string account, string key)
 		{
-			Uri blobUri = new Uri(string.Format("http://{0}.blob.core.windows.net", account));
-			Uri queueUri = new Uri(string.Format("http://{0}.queue.core.windows.net", account));
-			Uri tableUri = new Uri(string.Format("http://{0}.table.core.windows.net", account));
+            var server = ConfigurationManager.AppSettings["ServerUrl"] ?? "windows.net";
+
+			Uri blobUri = new Uri(string.Format("http://{0}.blob.core.{1}", account, server));
+			Uri queueUri = new Uri(string.Format("http://{0}.queue.core.{1}", account, server));
+			Uri tableUri = new Uri(string.Format("http://{0}.table.core.{1}", account, server));
 
 			s_credentials = new StorageCredentialsAccountAndKey(account, key);
 			s_storageAccount = new CloudStorageAccount(s_credentials, blobUri, queueUri, tableUri);
